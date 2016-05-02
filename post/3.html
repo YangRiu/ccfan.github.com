@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>C君的代码实验室</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen" />
+        <!-- output css -->
+        
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        
+        <link href="../css/prism.css" rel="stylesheet">
+        
+        <link href="../css/page.css" rel="stylesheet">
+        
+        <!-- output js -->
+        
+        <script src="../js/jquery.min.js"></script>
+        
+        <script src="../js/bootstrap.min.js"></script>
+        
+        <script src="../js/prism.js"></script>
+        
+        <script src="../js/page.js"></script>
+        
+    </head>
+    <body>        
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp首页
+                    </a>
+                    <!--<a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>&nbsp归档
+                    </a>-->
+                </div>
+                <form class="navbar-form navbar-right" role="search" action="http://www.baidu.com/s" method="get" accept-charset="utf-8">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q1" results="0" placeholder="search">
+                        <input type="hidden" name="q6" value="ccfan.github.com">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Go!</button>
+                </form>
+            </div>
+        </nav>
+        <div class="container" style="padding-bottom:20px;">
+            <div class="row">                
+                <div class="container">
+                    <B>2016年4月19日</B><div class="panel panel-default"><div class="panel-body"><h1 id="ubuntu-node-js-npm">ubuntu下安装node.js和npm</h1>
+<p>win10的最新预览版已经集成了一个ubuntu的子系统，经过使用，发现大多数的命令还是可用的，例如apt-get等。</p>
+<p>既然可用了，就想要在win10的Ubuntu下去安装一个node来玩玩。通过官网下载的最新版本，解压后，配置环境变量。最终node可用了。但是集成在其中的npm却需要单独配置一次。配错了之后搞起来还挺麻烦的。</p>
+<p>最后，在官网的下载页面，我发现了<a href="https://nodejs.org/en/download/package-manager">
+Installing Node.js via package manager</a>这个链接，有单独安装npm的方法。点进去才发现，其实就连node也没有必要那么麻烦的去下载安装。</p>
+<p>在Ubuntu下只需执行下面的命令即可，就可以使用apt-get直接安装了……</p>
+<pre><code class="lang-bash">curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre>
+<p>Node.js v5:</p>
+<pre><code class="lang-bash">curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre>
+<p>其它版本安装请去<a href="https://nodejs.org/en/download/package-manager">
+Installing Node.js via package manager</a>自行查看。</p>
+</div></div>
+                    <div class="page-footer"><div style="text-align:right; float:left;"></div><div style="text-align:right;"><a href="../post/2.html" class="btn btn-default">使用log4js实现node.js的日志<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div></div>
+                </div>
+            </div>
+        </div>  
+        <footer class="navbar-default">
+            <div class="container-fluid">
+                <p style="color:#FFF; padding-top:10px;">Email: dr.con00@icloud.com</p>
+                <p style="color:#FFF;">Weibo: <a style="color:#FFF;" href="http://weibo.com/drcon" target="_blank">@燃尽成灰的C君</a></p>
+                <p style="color:#FFF;">Powered by <a style="color:#FFF;" href="https://git.oschina.net/drcon00/ncbbs" target="_blank">ccblog</a></p>
+            </div>
+        </footer>
+        <div class="go-top">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></button>
+        </div>
+    </body>
+</html>

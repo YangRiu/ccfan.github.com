@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>C君的代码实验室</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen" />
+        <!-- output css -->
+        
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        
+        <link href="../css/prism.css" rel="stylesheet">
+        
+        <link href="../css/page.css" rel="stylesheet">
+        
+        <!-- output js -->
+        
+        <script src="../js/jquery.min.js"></script>
+        
+        <script src="../js/bootstrap.min.js"></script>
+        
+        <script src="../js/prism.js"></script>
+        
+        <script src="../js/page.js"></script>
+        
+    </head>
+    <body>        
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp首页
+                    </a>
+                    <!--<a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>&nbsp归档
+                    </a>-->
+                </div>
+                <form class="navbar-form navbar-right" role="search" action="http://www.baidu.com/s" method="get" accept-charset="utf-8">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q1" results="0" placeholder="search">
+                        <input type="hidden" name="q6" value="ccfan.github.com">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Go!</button>
+                </form>
+            </div>
+        </nav>
+        <div class="container" style="padding-bottom:20px;">
+            <div class="row">                
+                <div class="container">
+                    <B>2016年2月27日</B><div class="panel panel-default"><div class="panel-body"><h1 id="-log4js-node-js-">使用log4js实现node.js的日志</h1>
+<h4 id="-express-">这里使用express作为开发框架。</h4>
+<p>首先安装log4js</p>
+<pre><code>npm install log4js
+</code></pre><p>修改app.js加入log4js的依赖</p>
+<pre><code class="lang-javascript">var log4js = require(&#39;log4js&#39;);
+</code></pre>
+<p>注释掉express的日志，加入log4js的日志配置内容</p>
+<pre><code class="lang-javascript">// express日志，使用log4js替换
+// app.use(logger(&#39;dev&#39;));
+// 日志处理
+log4js.configure({
+    appenders : [
+        { type : &#39;console&#39; },
+        {
+            type       : &#39;file&#39;,
+            filename   : __dirname + &#39;/logs/access.log&#39;,
+            maxLogSize : 1024,
+            backups    : 4,
+            category   : &#39;normal&#39;
+        }
+    ],
+    replaceConsole: true
+});
+
+var logger = log4js.getLogger(&#39;normal&#39;);
+</code></pre>
+<h4 id="-">日志等级</h4>
+<p>log4js的日志分为六个等级，trace、debug、info、warn、error、fatal。<br>设置日志等级，将过滤掉低于该等级的日志；</p>
+<pre><code class="lang-javascript">// 设置日志登记
+logger.setLevel(&#39;INFO&#39;);
+</code></pre>
+<h4 id="-log4js-">设置log4js的日志格式</h4>
+<pre><code class="lang-javascript">// 日志格式
+app.use(log4js.connectLogger(logger,
+    {
+        level  : log4js.levels.INFO,
+        format : &#39;:method :url&#39;
+    })
+);
+</code></pre>
+<p>除了method、url外，更多的选项包括protocol、hostname、status、response-time、date、referrer、http-version、remote-addr、user-agent、content-length、</p>
+<h4 id="-">日志的使用</h4>
+<pre><code class="lang-javascript">logger.info(&#39;INFO LEVEL&#39;);
+</code></pre>
+</div></div>
+                    <div class="page-footer"><div style="text-align:right; float:left;"><a href="../post/3.html" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>ubuntu下安装node.js和npm</a></div><div style="text-align:right;"><a href="../post/1.html" class="btn btn-default">node下的异步编程<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div></div>
+                </div>
+            </div>
+        </div>  
+        <footer class="navbar-default">
+            <div class="container-fluid">
+                <p style="color:#FFF; padding-top:10px;">Email: dr.con00@icloud.com</p>
+                <p style="color:#FFF;">Weibo: <a style="color:#FFF;" href="http://weibo.com/drcon" target="_blank">@燃尽成灰的C君</a></p>
+                <p style="color:#FFF;">Powered by <a style="color:#FFF;" href="https://git.oschina.net/drcon00/ncbbs" target="_blank">ccblog</a></p>
+            </div>
+        </footer>
+        <div class="go-top">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></button>
+        </div>
+    </body>
+</html>

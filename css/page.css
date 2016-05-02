@@ -1,0 +1,11 @@
+.go-top {
+    display: none;
+    z-index: 999999;
+    position: fixed;
+    bottom: 130px;
+    right: 40px;
+    margin-left: 40px;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+}

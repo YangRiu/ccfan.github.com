@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>C君的代码实验室</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen" />
+        <!-- output css -->
+        
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        
+        <link href="../css/prism.css" rel="stylesheet">
+        
+        <link href="../css/page.css" rel="stylesheet">
+        
+        <!-- output js -->
+        
+        <script src="../js/jquery.min.js"></script>
+        
+        <script src="../js/bootstrap.min.js"></script>
+        
+        <script src="../js/prism.js"></script>
+        
+        <script src="../js/page.js"></script>
+        
+    </head>
+    <body>        
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp首页
+                    </a>
+                    <!--<a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>&nbsp归档
+                    </a>-->
+                </div>
+                <form class="navbar-form navbar-right" role="search" action="http://www.baidu.com/s" method="get" accept-charset="utf-8">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q1" results="0" placeholder="search">
+                        <input type="hidden" name="q6" value="ccfan.github.com">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Go!</button>
+                </form>
+            </div>
+        </nav>
+        <div class="container" style="padding-bottom:20px;">
+            <div class="row">                
+                <div class="container">
+                    <B>2016年2月26日</B><div class="panel panel-default"><div class="panel-body"><h1 id="node-">node下的异步编程</h1>
+<h3 id="-">传统的同步执行的代码</h3>
+<pre><code class="lang-javascript">function a() {
+    console.log(&#39;a&#39;);
+}
+
+function b() {
+    console.log(&#39;b&#39;);
+}
+
+function c() {
+    console.log(&#39;c&#39;);
+}
+
+a();
+b();
+c();
+</code></pre>
+<p>将顺序输出，a b c</p>
+<h3 id="-">使用定时器异步执行代码</h3>
+<pre><code class="lang-javascript">function a() {
+    setTimeout(function() {
+        console.log(&#39;a&#39;);
+    }, 100);
+}
+
+function b() {
+    console.log(&#39;b&#39;);
+}
+
+function c() {
+    console.log(&#39;c&#39;);
+}
+
+a();
+b();
+c();
+</code></pre>
+<p>这里将输出b c，a将在100ms后执行。同理setTimeout也可以使用setInterval方法，区别在于setInterval方法将反复尝试执行方法，也就是每隔100ms后就会出现一个a；</p>
+<h3 id="process-nexttick-setimmediate-">process.nextTick()与setImmediate()</h3>
+<pre><code class="lang-javascript">function a(i) {
+    console.log(&#39;a&#39; + i);
+}
+
+function b() {
+    console.log(&#39;b&#39;);
+}
+
+function c() {
+    console.log(&#39;c&#39;);
+}
+
+setImmediate(function () {
+    a(1);
+});
+process.nextTick(function () {
+    a(2);
+});
+a(3);
+b();
+c();
+</code></pre>
+<p>将输出a3 b c a2 a1，这里可以看出process.nextTick设定的执行顺序是要比setImmediate的靠前的。</p>
+</div></div>
+                    <div class="page-footer"><div style="text-align:right; float:left;"><a href="../post/2.html" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>使用log4js实现node.js的日志</a></div><div style="text-align:right;"><a href="../post/0.html" class="btn btn-default">由工作中演变而来的面试题<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></div></div>
+                </div>
+            </div>
+        </div>  
+        <footer class="navbar-default">
+            <div class="container-fluid">
+                <p style="color:#FFF; padding-top:10px;">Email: dr.con00@icloud.com</p>
+                <p style="color:#FFF;">Weibo: <a style="color:#FFF;" href="http://weibo.com/drcon" target="_blank">@燃尽成灰的C君</a></p>
+                <p style="color:#FFF;">Powered by <a style="color:#FFF;" href="https://git.oschina.net/drcon00/ncbbs" target="_blank">ccblog</a></p>
+            </div>
+        </footer>
+        <div class="go-top">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></button>
+        </div>
+    </body>
+</html>

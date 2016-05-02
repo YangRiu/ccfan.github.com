@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>C君的代码实验室</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen" />
+        <!-- output css -->
+        
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        
+        <link href="../css/prism.css" rel="stylesheet">
+        
+        <link href="../css/page.css" rel="stylesheet">
+        
+        <!-- output js -->
+        
+        <script src="../js/jquery.min.js"></script>
+        
+        <script src="../js/bootstrap.min.js"></script>
+        
+        <script src="../js/prism.js"></script>
+        
+        <script src="../js/page.js"></script>
+        
+    </head>
+    <body>        
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp首页
+                    </a>
+                    <!--<a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>&nbsp归档
+                    </a>-->
+                </div>
+                <form class="navbar-form navbar-right" role="search" action="http://www.baidu.com/s" method="get" accept-charset="utf-8">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q1" results="0" placeholder="search">
+                        <input type="hidden" name="q6" value="ccfan.github.com">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Go!</button>
+                </form>
+            </div>
+        </nav>
+        <div class="container" style="padding-bottom:20px;">
+            <div class="row">                
+                <div class="container">
+                    <B>2016年2月25日</B><div class="panel panel-default"><div class="panel-body"><h1 id="-">由工作中演变而来的面试题</h1>
+<p>这是一个我工作当中的遇到的一个问题，似乎很有趣，就当做了一道题去面试，发现几乎没人能全部答对并说出原因，遂拿出来聊一聊吧。</p>
+<p>先看题目代码：</p>
+<pre><code class="lang-javascript">function fun(n,o) {
+  console.log(o)
+  return {
+    fun:function(m){
+      return fun(m,n);
+    }
+  };
+}
+var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);//undefined,?,?,?
+var b = fun(0).fun(1).fun(2).fun(3);//undefined,?,?,?
+var c = fun(0).fun(1);  c.fun(2);  c.fun(3);//undefined,?,?,?
+//问:三行a,b,c的输出分别是什么？
+</code></pre>
+<!-- more -->
+<p>这是一道非常典型的JS闭包问题。其中嵌套了三层fun函数，搞清楚每层fun的函数是那个fun函数尤为重要。</p>
+<p>可以先在纸上或其他地方写下你认为的结果，然后展开看看正确答案是什么？</p>
+<pre><code class="lang-javascript">//答案：
+//a: undefined,0,0,0
+//b: undefined,0,1,2
+//c: undefined,0,1,1
+</code></pre>
+<p>都答对了么？如果都答对了恭喜你在js闭包问题当中几乎没什么可以难住你了；如果没有答对，继续往下分析。</p>
+<h3 id="js-">JS中有几种函数</h3>
+<p>首先，在此之前需要了解的是，在JS中函数可以分为两种，<strong>具名函数（命名函数）和匿名函数。</strong></p>
+<p>区分这两种函数的方法非常简单，可以通过输出 <code>fn.name</code> 来判断，有name的就是具名函数，没有name的就是匿名函数</p>
+<blockquote>
+<p>注意：在低版本IE上无法获取具名函数的name，会返回undefined，建议在火狐或是谷歌浏览器上测试</p>
+</blockquote>
+<p>或是采用兼容IE的获取函数name方法来获取函数名称：</p>
+<pre><code class="lang-javascript">/**
+  * 获取指定函数的函数名称（用于兼容IE）
+  * @param {Function} fun 任意函数
+  */
+function getFunctionName(fun) {
+    if (fun.name !== undefined)
+        return fun.name;
+    var ret = fun.toString();
+    ret = ret.substr(&#39;function &#39;.length);
+    ret = ret.substr(0, ret.indexOf(&#39;(&#39;));
+    return ret;
+}
+</code></pre>
+<p>遂用上述函数测试是否为匿名函数：</p>
+<p><img src="http://img.mukewang.com/5681e6ef0001f89302630118.png" alt="enter image description here" title="enter image title here"></p>
+<p>可以得知变量fn1是具名函数，fn2是匿名函数</p>
+<h3 id="-">创建函数的几种方式</h3>
+<p>说完函数的类型，还需要了解JS中创建函数都有几种创建方法。</p>
+<ol>
+<li>声明函数
+最普通最标准的声明函数方法，包括函数名及函数体。<pre><code class="lang-javascript">function fn1(){}
+</code></pre>
+</li>
+<li>创建匿名函数表达式
+创建一个变量，这个变量的内容为一个函数<pre><code class="lang-javascript">var fn1=function (){}
+</code></pre>
+注意采用这种方法创建的函数为匿名函数，即没有函数<code>name</code><pre><code class="lang-javascript">var fn1=function (){};
+getFunctionName(fn1).length;//0
+</code></pre>
+</li>
+<li>创建具名函数表达式
+创建一个变量，内容为一个带有名称的函数<pre><code class="lang-javascript">var fn1=function xxcanghai(){};
+</code></pre>
+<strong>注意：</strong>具名函数表达式的函数名只能在创建函数内部使用
+即采用此种方法创建的函数在函数外层只能使用fn1不能使用xxcanghai的函数名。xxcanghai的命名只能在创建的函数内部使用
+测试：<pre><code class="lang-javascript">var fn1=function xxcanghai(){
+ console.log(&quot;in:fn1&lt;&quot;,typeof fn1,&quot;&gt;xxcanghai:&lt;&quot;,typeof xxcanghai,&quot;&gt;&quot;);
+};
+console.log(&quot;out:fn1&lt;&quot;,typeof fn1,&quot;&gt;xxcanghai:&lt;&quot;,typeof xxcanghai,&quot;&gt;&quot;);
+fn1();
+//out:fn1&lt; function &gt;xxcanghai:&lt; undefined &gt;
+//in:fn1&lt; function &gt;xxcanghai:&lt; function &gt;
+</code></pre>
+可以看到在函数外部（out）无法使用xxcanghai的函数名，为undefined。<blockquote>
+<p>注意：在对象内定义函数如var o={ fn : function (){…} }，也属于函数表达式</p>
+</blockquote>
+</li>
+<li>Function构造函数
+可以给 Function 构造函数传一个函数字符串，返回包含这个字符串命令的函数，此种方法创建的是匿名函数。
+<img src="http://img.mukewang.com/5681e7b80001f58803370236.png" alt="enter image description here" title="enter image title here"></li>
+<li>自执行函数<pre><code class="lang-javascript">(function(){alert(1);})();
+(function fn1(){alert(1);})();
+</code></pre>
+自执行函数属于上述的“函数表达式”，规则相同</li>
+<li>其他创建函数的方法
+当然还有其他创建函数或执行函数的方法，这里不再多说，比如采用 <code>eval</code> ， <code>setTimeout</code>， <code>setInterval</code> 等非常用方法，这里不做过多介绍，属于非标准方法，这里不做过多展开。</li>
+</ol>
+<h3 id="-fun-">三个fun函数的关系是什么？</h3>
+<p>说完函数类型与创建函数的方法后，就可以回归主题，看这道面试题。</p>
+<p>这段代码中出现了三个fun函数，所以第一步先搞清楚，这三个fun函数的关系，哪个函数与哪个函数是相同的。</p>
+<pre><code class="lang-javascript">function fun(n,o) {
+  console.log(o)
+  return {
+    fun:function(m){
+      //...
+    }
+  };
+}
+</code></pre>
+<p>先看第一个fun函数，属于标准具名函数声明，是<strong>新创建</strong>的函数，他的返回值是一个对象字面量表达式，属于一个新的object。</p>
+<p>这个新的对象内部包含一个也叫fun的属性，通过上述介绍可得知，属于匿名函数表达式，即fun这个属性中存放的是一个新创建匿名函数表达式。</p>
+<p>这个新的对象内部包含一个也叫fun的属性，通过上述介绍可得知，属于匿名函数表达式，即fun这个属性中存放的是一个新创建匿名函数表达式。</p>
+<blockquote>
+<p>注意：所有声明的匿名函数都是一个新函数。</p>
+</blockquote>
+<p>所以第一个fun函数与第二个fun函数不相同，均为新创建的函数。</p>
+<h3 id="-">函数作用域链的问题</h3>
+<p>再说第三个fun函数之前需要先说下，在函数表达式内部能不能访问存放当前函数的变量。</p>
+<h4 id="-1-">测试1，对象内部的函数表达式：</h4>
+<pre><code class="lang-javascript">var o={
+  fn:function (){
+    console.log(fn);
+  }
+};
+o.fn();//ERROR报错
+</code></pre>
+<p><img src="http://img.mukewang.com/5681e92900011e8005050203.png" alt="enter image description here" title="enter image title here"></p>
+<h4 id="-2-">测试2，非对象内部的函数表达式：</h4>
+<pre><code class="lang-javascript">var fn=function (){
+  console.log(fn);
+};
+fn();//function (){console.log(fn);};正确
+</code></pre>
+<p><img src="http://img.mukewang.com/5681e9540001a60f03000178.png" alt="enter image description here" title="enter image title here"><br>结论是：使用var或是非对象内部的函数表达式内，可以访问到存放当前函数的变量；在对象内部的不能访问到。</p>
+<p>原因也非常简单，因为<strong>函数作用域链</strong>的问题，采用var的是在外部创建了一个fn变量，函数内部当然可以在内部寻找不到fn后向上册作用域查找fn，而在创建对象内部时，因为没有在函数作用域内创建fn，所以无法访问。</p>
+<p>所以综上所述，可以得知，<strong>最内层的return出去的fun函数不是第二层fun函数，是最外层的fun函数。</strong></p>
+<p>所以，三个fun函数的关系也理清楚了，第一个等于第三个，他们都不等于第二个。</p>
+<h3 id="-">到底在调用哪个函数？</h3>
+<p>再看下原题，现在知道了程序中有两个fun函数(第一个和第三个相同)，遂接下来的问题是搞清楚，运行时他执行的是哪个fun函数？</p>
+<pre><code class="lang-javascript">function fun(n,o) {
+  console.log(o)
+  return {
+    fun:function(m){
+      return fun(m,n);
+    }
+  };
+}
+var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);//undefined,?,?,?
+var b = fun(0).fun(1).fun(2).fun(3);//undefined,?,?,?
+var c = fun(0).fun(1);  c.fun(2);  c.fun(3);//undefined,?,?,?
+//问:三行a,b,c的输出分别是什么？
+</code></pre>
+<ol>
+<li>第一行a<pre><code class="lang-javascript">var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);
+</code></pre>
+可以得知，第一个fun(0)是在调用第一层fun函数。第二个fun(1)是在调用前一个fun的返回值的fun函数，所以：<br>第后面几个fun(1),fun(2),fun(3),函数都是在调用第二层fun函数。<br>遂：<br>在第一次调用fun(0)时，o为undefined；<br>第二次调用fun(1)时m为1，此时fun闭包了外层函数的n，也就是第一次调用的n=0，即m=1，n=0，并在内部调用第一层fun函数fun(1,0);所以o为0；<br>第三次调用fun(2)时m为2，但依然是调用a.fun，所以还是闭包了第一次调用时的n，所以内部调用第一层的fun(2,0);所以o为0<br>第四次同理；<br><strong>即：最终答案为undefined,0,0,0</strong></li>
+<li>第二行b<pre><code class="lang-javascript">var b = fun(0).fun(1).fun(2).fun(3);//undefined,?,?,?
+</code></pre>
+先从fun(0)开始看，肯定是调用的第一层fun函数；而他的返回值是一个对象，所以第二个fun(1)调用的是第二层fun函数，后面几个也是调用的第二层fun函数。<br>遂：<br>在第一次调用第一层fun(0)时，o为undefined；<br>第二次调用 .fun(1)时m为1，此时fun闭包了外层函数的n，也就是第一次调用的n=0，即m=1，n=0，并在内部调用第一层fun函数fun(1,0);所以o为0；<br>第三次调用 .fun(2)时m为2，此时当前的fun函数不是第一次执行的返回对象，而是第二次执行的返回对象。而在第二次执行第一层fun函数时时(1,0)所以n=1,o=0,返回时闭包了第二次的n，遂在第三次调用第三层fun函数时m=2,n=1，即调用第一层fun函数fun(2,1)，所以o为1；<br>第四次调用 .fun(3)时m为3，闭包了第三次调用的n，同理，最终调用第一层fun函数为fun(3,2)；所以o为2；<br><strong>即最终答案：undefined,0,1,2</strong></li>
+<li>第三行c<pre><code class="lang-javascript">var c = fun(0).fun(1);  c.fun(2);  c.fun(3);//undefined,?,?,?
+</code></pre>
+根据前面两个例子，可以得知：<br>fun(0)为执行第一层fun函数，.fun(1)执行的是fun(0)返回的第二层fun函数，这里语句结束，遂c存放的是fun(1)的返回值，而不是fun(0)的返回值，所以c中闭包的也是fun(1)第二次执行的n的值。c.fun(2)执行的是fun(1)返回的第二层fun函数，c.fun(3)执行的也是fun(1)返回的第二层fun函数。<br>遂：<br>在第一次调用第一层fun(0)时，o为undefined；<br>第二次调用 .fun(1)时m为1，此时fun闭包了外层函数的n，也就是第一次调用的n=0，即m=1，n=0，并在内部调用第一层fun函数fun(1,0);所以o为0；<br>第三次调用 .fun(2)时m为2，此时fun闭包的是第二次调用的n=1，即m=2，n=1，并在内部调用第一层fun函数fun(2,1);所以o为1；<br>第四次.fun(3)时同理，但依然是调用的第二次的返回值，遂最终调用第一层fun函数fun(3,1)，所以o还为1<br><strong>即最终答案：undefined,0,1,1</strong></li>
+</ol>
+<h3 id="-">后话</h3>
+<p>这段代码原本是在做一个将异步回调改写为同步调用的组件时的代码，发现了这个坑，对JS的闭包有了更深入的了解。<br>关于什么是闭包，网上的文章数不胜数，但理解什么是闭包还是要在代码中自己去发现与领悟。<br>如果要我说什么是闭包，我认为，广义上的闭包就是指一个变量在他自身作用域外被使用了，就叫发生了闭包。<br>希望读者能通过本文对闭包现象有进一步的了解，如有其它见解或看法，欢迎指正或留言讨论。  </p>
+<blockquote>
+<p>作者：小小沧海<br>出处：<a href="http://www.cnblogs.com/xxcanghai/">http://www.cnblogs.com/xxcanghai/</a><br>本文地址：<a href="http://www.cnblogs.com/xxcanghai/p/4991870.html">http://www.cnblogs.com/xxcanghai/p/4991870.html</a></p>
+</blockquote>
+</div></div>
+                    <div class="page-footer"><div style="text-align:right; float:left;"><a href="../post/1.html" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>node下的异步编程</a></div><div style="text-align:right;"></div></div>
+                </div>
+            </div>
+        </div>  
+        <footer class="navbar-default">
+            <div class="container-fluid">
+                <p style="color:#FFF; padding-top:10px;">Email: dr.con00@icloud.com</p>
+                <p style="color:#FFF;">Weibo: <a style="color:#FFF;" href="http://weibo.com/drcon" target="_blank">@燃尽成灰的C君</a></p>
+                <p style="color:#FFF;">Powered by <a style="color:#FFF;" href="https://git.oschina.net/drcon00/ncbbs" target="_blank">ccblog</a></p>
+            </div>
+        </footer>
+        <div class="go-top">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></button>
+        </div>
+    </body>
+</html>

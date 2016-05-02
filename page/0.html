@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>C君的代码实验室</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen" />
+        <!-- output css -->
+        
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        
+        <link href="../css/prism.css" rel="stylesheet">
+        
+        <link href="../css/page.css" rel="stylesheet">
+        
+        <!-- output js -->
+        
+        <script src="../js/jquery.min.js"></script>
+        
+        <script src="../js/bootstrap.min.js"></script>
+        
+        <script src="../js/prism.js"></script>
+        
+        <script src="../js/page.js"></script>
+        
+    </head>
+    <body>        
+       <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp首页
+                    </a>
+                    <!--<a class="navbar-brand" href="../index.html">
+                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>&nbsp归档
+                    </a>-->
+                </div>
+                <form class="navbar-form navbar-right" role="search" action="http://www.baidu.com/s" method="get" accept-charset="utf-8">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q1" results="0" placeholder="search">
+                        <input type="hidden" name="q6" value="ccfan.github.com">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Go!</button>
+                </form>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">                
+                <div class="container">
+                    <B style="padding-left:5px ;">2016年4月19日</B><div class="panel panel-default"><div class="panel-body"><h1 id="ubuntu-node-js-npm">ubuntu下安装node.js和npm</h1>
+<p>win10的最新预览版已经集成了一个ubuntu的子系统，经过使用，发现大多数的命令还是可用的，例如apt-get等。</p>
+<p>既然可用了，就想要在win10的Ubuntu下去安装一个node来玩玩。通过官网下载的最新版本，解压后，配置环境变量。最终node可用了。但是集成在其中的npm却需要单独配置一次。配错了之后搞起来还挺麻烦的。</p>
+<p>最后，在官网的下载页面，我发现了<a href="https://nodejs.org/en/download/package-manager">
+Installing Node.js via package manager</a>这个链接，有单独安装npm的方法。点进去才发现，其实就连node也没有必要那么麻烦的去下载安装。</p>
+<p>在Ubuntu下只需执行下面的命令即可，就可以使用apt-get直接安装了……</p>
+<pre><code class="lang-bash">curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre>
+<p>Node.js v5:</p>
+<pre><code class="lang-bash">curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre>
+<p>其它版本安装请去<a href="https://nodejs.org/en/download/package-manager">
+Installing Node.js via package manager</a>自行查看。</p>
+</div></div><B style="padding-left:5px ;">2016年2月27日</B><div class="panel panel-default"><div class="panel-body"><h1 id="-log4js-node-js-">使用log4js实现node.js的日志</h1>
+<h4 id="-express-">这里使用express作为开发框架。</h4>
+<p>首先安装log4js</p>
+<pre><code>npm install log4js
+</code></pre><p>修改app.js加入log4js的依赖</p>
+<pre><code class="lang-javascript">var log4js = require(&#39;log4js&#39;);
+</code></pre>
+<p>注释掉express的日志，加入log4js的日志配置内容</p>
+<pre><code class="lang-javascript">// express日志，使用log4js替换
+// app.use(logger(&#39;dev&#39;));
+// 日志处理
+log4js.configure({
+    appenders : [
+        { type : &#39;console&#39; },
+        {
+            type       : &#39;file&#39;,
+            filename   : __dirname + &#39;/logs/access.log&#39;,
+            maxLogSize : 1024,
+            backups    : 4,
+            category   : &#39;normal&#39;
+        }
+    ],
+    replaceConsole: true
+});
+
+var logger = log4js.getLogger(&#39;normal&#39;);
+</code></pre>
+<h4 id="-">日志等级</h4>
+<p>log4js的日志分为六个等级，trace、debug、info、warn、error、fatal。<br>设置日志等级，将过滤掉低于该等级的日志；</p>
+<pre><code class="lang-javascript">// 设置日志登记
+logger.setLevel(&#39;INFO&#39;);
+</code></pre>
+<h4 id="-log4js-">设置log4js的日志格式</h4>
+<pre><code class="lang-javascript">// 日志格式
+app.use(log4js.connectLogger(logger,
+    {
+        level  : log4js.levels.INFO,
+        format : &#39;:method :url&#39;
+    })
+);
+</code></pre>
+<p>除了method、url外，更多的选项包括protocol、hostname、status、response-time、date、referrer、http-version、remote-addr、user-agent、content-length、</p>
+<h4 id="-">日志的使用</h4>
+<pre><code class="lang-javascript">logger.info(&#39;INFO LEVEL&#39;);
+</code></pre>
+</div></div><B style="padding-left:5px ;">2016年2月26日</B><div class="panel panel-default"><div class="panel-body"><h1 id="node-">node下的异步编程</h1>
+<h3 id="-">传统的同步执行的代码</h3>
+<pre><code class="lang-javascript">function a() {
+    console.log(&#39;a&#39;);
+}
+
+function b() {
+    console.log(&#39;b&#39;);
+}
+
+function c() {
+    console.log(&#39;c&#39;);
+}
+
+a();
+b();
+c();
+</code></pre>
+<p>将顺序输出，a b c</p>
+<h3 id="-">使用定时器异步执行代码</h3>
+<pre><code class="lang-javascript">function a() {
+    setTimeout(function() {
+        console.log(&#39;a&#39;);
+    }, 100);
+}
+
+function b() {
+    console.log(&#39;b&#39;);
+}
+
+function c() {
+    console.log(&#39;c&#39;);
+}
+
+a();
+b();
+c();
+</code></pre>
+<p>这里将输出b c，a将在100ms后执行。同理setTimeout也可以使用setInterval方法，区别在于setInterval方法将反复尝试执行方法，也就是每隔100ms后就会出现一个a；</p>
+<h3 id="process-nexttick-setimmediate-">process.nextTick()与setImmediate()</h3>
+<pre><code class="lang-javascript">function a(i) {
+    console.log(&#39;a&#39; + i);
+}
+
+function b() {
+    console.log(&#39;b&#39;);
+}
+
+function c() {
+    console.log(&#39;c&#39;);
+}
+
+setImmediate(function () {
+    a(1);
+});
+process.nextTick(function () {
+    a(2);
+});
+a(3);
+b();
+c();
+</code></pre>
+<p>将输出a3 b c a2 a1，这里可以看出process.nextTick设定的执行顺序是要比setImmediate的靠前的。</p>
+</div></div><B style="padding-left:5px ;">2016年2月25日</B><div class="panel panel-default"><div class="panel-body"><h1 id="-">由工作中演变而来的面试题</h1>
+<p>这是一个我工作当中的遇到的一个问题，似乎很有趣，就当做了一道题去面试，发现几乎没人能全部答对并说出原因，遂拿出来聊一聊吧。</p>
+<p>先看题目代码：</p>
+<pre><code class="lang-javascript">function fun(n,o) {
+  console.log(o)
+  return {
+    fun:function(m){
+      return fun(m,n);
+    }
+  };
+}
+var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);//undefined,?,?,?
+var b = fun(0).fun(1).fun(2).fun(3);//undefined,?,?,?
+var c = fun(0).fun(1);  c.fun(2);  c.fun(3);//undefined,?,?,?
+//问:三行a,b,c的输出分别是什么？
+</code></pre>
+<a href="../post/0.html" class="btn btn-default btn-sm" style="float: right;">more</a></div></div>
+                    <ul class="pagination" style="margin-top: 0px;"><li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li><li class="active"><a href="#">1</a></li><li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li></ul>
+                </div>
+            </div>
+        </div>  
+        <footer class="navbar-default">
+            <div class="container-fluid">
+                <p style="color:#FFF; padding-top:10px;">Email: dr.con00@icloud.com</p>
+                <p style="color:#FFF;">Weibo: <a style="color:#FFF;" href="http://weibo.com/drcon" target="_blank">@燃尽成灰的C君</a></p>
+                <p style="color:#FFF;">Powered by <a style="color:#FFF;" href="https://git.oschina.net/drcon00/ncbbs" target="_blank">ccblog</a></p>
+            </div>
+        </footer>
+        <div class="go-top">
+            <button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></button>
+        </div>
+    </body>
+</html>
